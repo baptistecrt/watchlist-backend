@@ -9,11 +9,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { endpoint, query } = req.query;
+  const { q, type = 'multi' } = req.query;
   const TMDB_KEY = 'b6a1b8cbedd5f34d3b88df2b58e7c1b2';
 
+  if (!q) {
+    return res.status(400).json({ error: 'Parameter "q" is required' });
+  }
+
   try {
-    const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${TMDB_KEY}&${query}`;
+    const url = `https://api.themoviedb.org/3/search/${type}?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}&language=fr`;
     const response = await fetch(url);
     const data = await response.json();
     res.status(200).json(data);
